@@ -9,19 +9,20 @@ from barcode.writer import ImageWriter
 
 tmp_path = 'BarcodeGenerator.png'
 
+barcode_types = ['code128']
 
 def generate_barcode(event):
     global tmp_path
     delete_temp_image()
     barcode_txt = ent_barcode_txt.get()
     code_type = ent_code_type.get()
-    if len(barcode_txt) is 0:
+    if len(barcode_txt) == 0:
         notify('Nothing to do')
         return
     print(f'Code type: {code_type}')
     print(f'Text to generate: {barcode_txt}')
     b_class = barcode.get_barcode_class(code_type)
-    iw = ImageWriter()
+    iw = barcode.writer.ImageWriter()
     iw.set_options({'dpi': 140})
     try:
         bar = b_class(str(barcode_txt), writer=iw)
@@ -89,21 +90,6 @@ def notify(string='Press Enter to generate barcode'):
 
 master = Tk()
 
-lbl_barcode_txt = Label(master, text='Text to Generate')
-lbl_barcode_txt.place(x=100, y=10)
-
-ent_barcode_txt = Entry(master)
-ent_barcode_txt.bind('<Return>', generate_barcode)
-ent_barcode_txt.place(x=80, y=40)
-ent_barcode_txt.focus()
-
-lbl_code_type = Label(master, text='Format')
-lbl_code_type.place(x=360, y=10)
-
-ent_code_type = ttk.Combobox(master, values=barcode.PROVIDED_BARCODES)
-ent_code_type.config(width=12)
-ent_code_type.place(x=330, y=40)
-ent_code_type.current(0)
 
 lbl_preview = Label(master, text='Preview')
 lbl_preview.place(x=240, y=180)
@@ -115,15 +101,7 @@ pnl_image.place(x=220, y=130)
 lbl_notify = Label(master, text='None')
 lbl_notify.place(x=5, y=290)
 
-btn_open = Button(master, text='Open', command=open_image)
-btn_open.bind('<Return>', open_image)
-btn_open.config(width=10)
-btn_open.place(x=60, y=120)
 
-btn_save = Button(master, text='Save', command=save_image)
-btn_save.bind('<Return>', save_image)
-btn_save.config(width=10)
-btn_save.place(x=60, y=190)
 
 master.iconbitmap(r'icon.ico')
 master.wm_title("BarcodeGenerator")
